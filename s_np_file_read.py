@@ -45,7 +45,6 @@ def time_diff(start_time):
 def main(tile_file):
     
     # SETUP
-    #tile_file="/Users/estokes/Desktop/RAICS/NautilusProjects/zarr_manipulate/Docker/fua_tiles_0.txt"
     # Start the clock
     stime = time()     
     print(f"Start time:{stime}.")
@@ -71,8 +70,7 @@ def main(tile_file):
             s3_secret_key = str(line.strip()[4:-1])
             break
            
-    #with open(Path("/app/Training_dates.csv"), 'r') as f:
-    #training_len=pd.read_csv(Path("/app/training_dates.csv"), 'r')
+    
     with open(Path("/app/eval.json"),'r') as jf:
         eval_dates=json.load(jf)
         
@@ -124,14 +122,8 @@ def main(tile_file):
         ptime = time()
         for poly_id in tile_poly[tile]:
         # Copy the zarr for each fua to the container from s3
-            '''existing_files_ls = rclone.with_config(cfg).run_cmd(command="copy", 
-                                                                extra_args=[f"ceph:zarrs/fua/fua_{poly_id}_{tile}.zarr/", str(Path("/app/temp_data/fua",
-                                                                                                                                   f"fua_{poly_id}_{tile}.zarr"))])'''
-            '''existing_files_ls = rclone.with_config(cfg).run_cmd(command="ls", extra_args=[f"ceph:zarrs/fua/fua_{poly_id}_{tile}.zarr"])
-            rclone.with_config(cfg).run_cmd(command="copy",
-                                            extra_args=[f"ceph:zarrs/fua/fua_{poly_id}_{tile}.zarr/", str(Path(f"/app/temp_data/"))])'''
-                             
-            #fua_subset_numpy/fua_88701036_h22v07_date.npy .                        
+            
+                                                   
             existing_ds_files_ls = rclone.with_config(cfg).run_cmd(command="ls", extra_args=[f"ceph:fua_subset_numpy/fua_{poly_id}_{tile}_obs.npy"])
             rclone.with_config(cfg).run_cmd(command="copy",
                                             extra_args=[f"ceph:fua_subset_numpy/fua_{poly_id}_{tile}_obs.npy", str(Path(f"/app/temp_data/"))]) 
@@ -153,8 +145,6 @@ def main(tile_file):
             print('looking at polygon:', poly_id)
             #do stuff to the zarr 
                 
-            #zarr_path=Path("riacs/fua/fua_63000308_h11v07.zarr")
-            #zarr_path=Path("app/temp_data/fua",f"fua_{poly_id}_{tile}.zarr")
             zarr_path_data=Path("app/temp_data",f"fua_{poly_id}_{tile}_obs.npy")
             zarr_path_date=Path("app/temp_data",f"fua_{poly_id}_{tile}_date.npy")
             
@@ -165,16 +155,7 @@ def main(tile_file):
             print('zarr d path is:',zarr_path_date)
             print('string d path:',str(zarr_path_date))
                 
-            #test_files= (os.system("ls /app/temp_data/"))
-            #test_files= os.system("ls f""/app/temp_data/*")
             
-            #print('test files:',test_files)
-            
-            #test_files= os.listdir(f"/app/temp_data/")
-            
-            #print(' list test files :',test_files)
-            
-            #zarr_path2=Path(f"/app/temp_data/",f"DNB_BRDF-Corrected_NTL.zarr")
             zarr_path_obs=Path(f"/app/temp_data",f"fua_{poly_id}_{tile}_obs.npy")
             zarr_path_date=Path(f"/app/temp_data",f"fua_{poly_id}_{tile}_date.npy")
             
@@ -189,48 +170,10 @@ def main(tile_file):
             
             forecast_city_list(poly_id, tile, end_d,end_m,end_y, zarr_path_obs, zarr_path_date, w_dir_wt, w_dir_fc,w_dir_comp, eval_dates)
 
-            # Open the zarr file in read mode
-            #poly_zarr = zarr.open(zarr_path2, mode='r')
-                
-                
-            #ts_stack, dates=zarr_to_numpy(zarr_path,poly_zarr)# remove ra_ntls
-                
-            '''with open(str(Path("/app/temp_data/fua",f"fua_{poly_id}_{tile_name}_obs.npy")), 'wb') as f:
-                np.save(f, ts_stack)
-                
-            with open(str(Path("/app/temp_data/fua",f"fua_{poly_id}_{tile_name}_date.npy")), 'wb') as f:
-                np.save(f, np.asarray(poly_zarr["Dates"][0:]))'''
             
-            #np.savetxt(str(Path("/app/temp_data/fua",f"fua_{poly_id}_{tile_name}_obs2.csv")),ts_stack,fmt='%f', delimiter=',', newline='\n',header='ntl_avg, ntl_wt_avg, gf_avg, gf_wt_avg,gf_flag, ntl_flag')
-                
             print(f"done training {poly_id} gap-filled")
                 
-            # Creating zarr files for WSF and VNP46A2        
-                
-                
-                
-                
-            # Copy the numpy observation array to the s3
-            '''rclone.with_config(cfg).run_cmd(command="copy", 
-                                            extra_args=[str(Path("/app/temp_data/fua",
-                                                                 f"fua_{poly_id}_{tile}_obs.npy")),
-                                                        f"ceph:fua_subset_numpy/fua_{poly_id}_{tile}_obs.npy"])
-                                                        
-            rclone.with_config(cfg).run_cmd(command="copy", 
-                                            extra_args=[str(Path("/app/temp_data/fua",
-                                                                 f"fua_{poly_id}_{tile}_obs2.csv")),
-                                                        f"ceph:fua_subset_numpy/fua_{poly_id}_{tile}_obs2.csv"])
-                                                        
-            # Copy the numpy date array to the s3
-            rclone.with_config(cfg).run_cmd(command="copy", 
-                                            extra_args=[str(Path("/app/temp_data/fua",
-                                                                 f"fua_{poly_id}_{tile}_date.npy")),
-                                                        f"ceph:fua_subset_numpy/fua_{poly_id}_{tile}_date.npy"])     '''                                       
-            # Remove zarr file from container
-                
-            # Remove zarr file from container
-            #rmtree(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}_obs.npy")))
-            #rmtree(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}_obs2.csv")))
+            
             
             print('directory:', w_dir_wt, w_dir_fc)
             
@@ -326,11 +269,7 @@ def main(tile_file):
                                                         f"{w_dir_comp}/"])
             
             # Remove zarr file from container
-            '''os.remove(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}_obs.npy")))
-            os.remove(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}_obs2.csv")))
-            os.remove(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}_date.npy"))) 
-            # Remove zarr file from container
-            rmtree(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}.zarr")))'''
+            
             
             os.remove(str(Path("/app/temp_data", f"multiLSTM_pred_{poly_id}_{tile}_default_lr_with_relu_v2.npy")))
             os.remove(str(Path("/app/temp_data", f"multiANN_pred_{poly_id}_{tile}_default_lr_v2.npy")))
@@ -351,8 +290,6 @@ def main(tile_file):
             os.remove(str(Path("/app/temp_data", f"fua_{poly_id}_{tile}_gt_marker.png")))
                 
             # Remove zarr file from container
-            #rmtree(str(Path("/app/temp_data/fua", f"fua_{poly_id}_{tile}_date.npy")))
-                
             # Update
             print(f"Finished cleanup for {tile} {poly_id} in {np.around(time() - ptime, decimals=2)}s.") 
                 
