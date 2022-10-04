@@ -133,22 +133,12 @@ def main(tile_file):
                 
             zarr_path_data=Path("app/temp_data",f"fua_{poly_id}_{tile}_obs.npy")
             zarr_path_date=Path("app/temp_data",f"fua_{poly_id}_{tile}_date.npy")
-            
-            
-            print('zarr o path is:',zarr_path_data)
-            print('string o path:',str(zarr_path_data))
-            
-            print('zarr d path is:',zarr_path_date)
-            print('string d path:',str(zarr_path_date))
                 
             
             zarr_path_obs=Path(f"/app/temp_data",f"fua_{poly_id}_{tile}_obs.npy")
             zarr_path_date=Path(f"/app/temp_data",f"fua_{poly_id}_{tile}_date.npy")
             
-            print('zarr path 2', zarr_path_obs, zarr_path_date)
-            print('poly id:', poly_id)
-            print('poly id in training len:', training_len[poly_id])
-            print('trainig len:', training_len)
+            
             end_d=training_len[poly_id][0].split('-')[0]
             end_m=training_len[poly_id][0].split('-')[1]
             end_y=training_len[poly_id][0].split('-')[2]
@@ -160,8 +150,6 @@ def main(tile_file):
             print(f"done training {poly_id} gap-filled")
                 
             
-            
-            print('directory:', w_dir_wt, w_dir_fc)
             
             #COPY CNN FILES
             
