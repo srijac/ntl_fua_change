@@ -12,23 +12,11 @@ import rclone
 import json
 from shutil import rmtree
 from sys import argv
-#from s_zarr_to_numpy import *
 import csv
 from ts_main_v3 import *
 import pandas as pd
-
-
 import sys
-print('version',sys.version)
 
-def chunk_files(files_list, chunk=20):
-    it = iter(files_list)
-    while True:
-        piece = list(islice(it, chunk))
-        if piece:
-            yield piece
-        else:
-            return
 
 
 def create_s3_dir(config, uri):
@@ -93,8 +81,6 @@ def main(tile_file):
     cfg = cfg.format(s3_access_key, s3_secret_key)
     
     # Make s3 "directories" for the output data
-    '''for new_dir in ["ceph:fua_subset_numpy"]:#Fua_run2 is the main dir? with fua as subdir?
-        create_s3_dir(cfg, new_dir)'''
     w_dir="ceph:anomaly_write"
     w_dir_wt="ceph:anomaly_write/weights"
     w_dir_fc="ceph:anomaly_write/forecast"
