@@ -2,10 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-#from statsmodels.tsa.seasonal import seasonal_decompose
-#from statsmodels.tsa.seasonal import STL
-#from statsmodels.tsa.arima.model import ARIMA
-#import statsmodels.api as sm
 from sklearn.metrics import mean_squared_error
 import os
 import math
@@ -120,13 +116,7 @@ def get_ra(gf_ntl,observation_count):
         #print('ra at t:', ra_ntls)
     
     ra_ntls=np.asarray(ra_ntls)
-    '''print('ra ntl shape',ra_ntls.shape)
-    plt.figure()
-    plt.subplot(2,1,1)
-    plt.plot(ra_ntls)
-    plt.subplot(2,1,2)
-    plt.plot(gf_ntl)
-    plt.show()'''
+    
     
     return ra_ntls
 
@@ -193,53 +183,8 @@ def get_median(pred_m, avg_pred):
     print('median prediction from all windows completed')
     return avg_pred
     
-'''def get_ens(avg_pred_ann,avg_pred_cnn,avg_pred_lstm, weights ):
-    #ANN, CNN, LSTM
-    c_flag=np.zeros((avg_pred_lstm.shape[0],1))
-    ens=np.zeros((avg_pred_ann.shape[0],avg_pred_ann.shape[1]))
-    for i in np.arange(0,avg_pred_lstm.shape[0]): # assuming only one fails,
-        #avg_pred_ens[i,0]=(0.2*avg_pred_cnn[i,0]+0.4*avg_pred_ann[i,0]+0.4*avg_pred_lstm[i,0])/1
-        if ((avg_pred_lstm[i,0]>1.75) | (avg_pred_lstm[i,0]<-0.75)):
-            #if (((avg_pred_ann[i,0]<1.75) & (avg_pred_ann[i,0]>-0.75))& ((avg_pred_cnn[i,0]<1.75)&(avg_pred_cnn[i,0]>-0.75))):
-            ens[i,0]=(avg_pred_ann[i,0]+avg_pred_cnn[i,0])/2
-            c_flag[i,0]=(2/3)
-            #elif if ((avg_pred_ann[i,0]>1.75) & (avg_pred_ann[i,0]<-0.75)):
-            #ens[i,0]=(avg_pred_cnn[i,0])/1
-            #c_flag[i,0]=(1/3)
-            #elif if ((avg_pred_cnn[i,0]>1.75) & (avg_pred_cnn[i,0]<-0.75)):
-            #ens[i,0]=(avg_pred_ann[i,0])/1
-            #c_flag[i,0]=(1/3)
-        elif ((avg_pred_cnn[i,0]>1.75) | (avg_pred_cnn[i,0]<-0.75)):
-            #if (((avg_pred_ann[i,0]<1.75) & (avg_pred_ann[i,0]>-0.75))& ((avg_pred_lstm[i,0]<1.75)&(avg_pred_lstm[i,0]>-0.75))):
-            ens[i,0]=(avg_pred_ann[i,0])/1
-            c_flag[i,0]=(2/3)
-        elif ((avg_pred_ann[i,0]>1.75) | (avg_pred_ann[i,0]<-0.75)):
-            ens[i,0]=(avg_pred_cnn[i,0])/1
-            c_flag[i,0]=(2/3)
-        elif ((avg_pred_lstm[i,0]<1.75) & (avg_pred_lstm[i,0]>-0.75)) & ((avg_pred_cnn[i,0]<1.75) & (avg_pred_cnn[i,0]>-0.75)) & ((avg_pred_ann[i,0]<1.75) | (avg_pred_ann[i,0]>-0.75)):
-            ens[i,0]=(weights[1]*avg_pred_cnn[i,0]+weights[0]*avg_pred_ann[i,0]+weights[2]*avg_pred_lstm[i,0])/1
-            c_flag[i,0]=1
-    return ens, c_flag'''
-    
-'''def get_ens(avg_pred_ann,avg_pred_cnn,avg_pred_lstm, weights ):
-    #ANN, CNN, LSTM
-    c_flag=np.zeros((avg_pred_lstm.shape[0],1))
-    ens=np.zeros((avg_pred_ann.shape[0],avg_pred_ann.shape[1]))
-    for i in np.arange(0,avg_pred_lstm.shape[0]): # assuming only one fails,
-        #avg_pred_ens[i,0]=(0.2*avg_pred_cnn[i,0]+0.4*avg_pred_ann[i,0]+0.4*avg_pred_lstm[i,0])/1
-        if ((avg_pred_lstm[i,0]>1.75) | (avg_pred_lstm[i,0]<-0.75)):
-            ens[i,0]=(avg_pred_ann[i,0]+avg_pred_cnn[i,0])/2
-            c_flag[i,0]=(2/3)
-        elif ((avg_pred_cnn[i,0]>1.75) | (avg_pred_cnn[i,0]<-0.75)):
-            ens[i,0]=(avg_pred_ann[i,0])/1
-            c_flag[i,0]=(2/3)
-        elif ((avg_pred_ann[i,0]>1.75) | (avg_pred_ann[i,0]<-0.75)):
-            ens[i,0]=(avg_pred_cnn[i,0])/1
-            c_flag[i,0]=(2/3)
-        elif ((avg_pred_lstm[i,0]<1.75) & (avg_pred_lstm[i,0]>-0.75)) & ((avg_pred_cnn[i,0]<1.75) & (avg_pred_cnn[i,0]>-0.75)) & ((avg_pred_ann[i,0]<1.75) | (avg_pred_ann[i,0]>-0.75)):
-            ens[i,0]=(weights[1]*avg_pred_cnn[i,0]+weights[0]*avg_pred_ann[i,0]+weights[2]*avg_pred_lstm[i,0])/1
-            c_flag[i,0]=1
-    return ens, c_flag'''
+
+
     
 def get_ens(avg_pred_ann,avg_pred_cnn,avg_pred_lstm, weights ):
     #ANN, CNN, LSTM
@@ -389,15 +334,9 @@ def ch_summary_methods(bin_ann_avg,bin_cnn_avg, bin_lstm_avg,bin_ens_avg, avg_pr
     return ch_summary
 
 def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):    
-    #names=file_reader(r_dir_path)
-    #print('FILES:', names)
-    
-    #df = pd.read_csv(os.path.join(r_dir_path,n),sep='\s+',header=None)
     s=time()
     UA=n
-    #tile=(n.split('_'))[2]
     print('CURRENT UA, tile:', UA, tile)
-    print('path3:',path_obs)
     
     df=np.load(path_obs)
     
@@ -407,8 +346,7 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     end_month=end_m
     end_year=end_y
     
-    print('END YEAR:', end_year)
-    #num_val_ntl=df[:,0]
+    
     num_val_gf=df[:,3]
     gf_flag=df[:,4]
     
@@ -430,7 +368,7 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     non_nan_month=[]
     non_nan_day=[]
     non_nan_flag=[]
-    #print(len(num_val_30))
+    
     print('year',yr)
     num_val_30=num_val_gf
     print('num_val_30',num_val_gf[0] )
@@ -455,9 +393,7 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     
     start=np.asarray(np.where(non_nan_yr==2012))#changed from yr to non-nan-yr
     
-    #print('start array:', start)
-    #print('start',start[0,0])
-    #end=np.asarray(np.where(year=='2016'))
+    
     print('end yr is:',int(end_year))
     end=np.asarray(np.where(non_nan_yr==int(end_year)))
     
@@ -473,8 +409,6 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     win_l=60
     print('list len:', len(non_nan_d_list))
     for i in np.arange(start_idx+win_l,len(non_nan_d_list)):
-        #print(i,non_nan_d_list[i], non_nan_m_list[i], non_nan_y_list[i])
-        #print(i,str(non_nan_d_list[i])+'-'+str(non_nan_m_list[i])+'-'+str(non_nan_y_list[i]))
         d_full.append(str(non_nan_y_list[i])+'-'+str(non_nan_m_list[i])+'-'+str(non_nan_d_list[i]))
     
     num_val=non_nan
@@ -485,23 +419,9 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     num_val=ra_ntls
     num_val=np.reshape(num_val,(non_nan.shape[0],1))
     
-    
-    '''plt.figure()
-    plt.subplot(2,1,1)
-    plt.title('after call')
-    plt.plot(init_ntl)
-    plt.subplot(2,1,2)
-    plt.plot(ra_ntls)
-    plt.show()'''
     print('num_val shape:', num_val.shape)
     mm_obj,norm_ts_mm=min_max_norm(num_val,start_idx,end_idx)# returns the entirely normalized ts, based on parameters 2017: 2019 (training);; UPDATE TO INDEX
-    #normalized = scaler.transform(num_val5)
-    #inversed = mm_obj.inverse_transform(norm_ts_mm)
     
-    #print(len(num_val_30))
-    
-    
-    #years_tick=['2012','2013','2014','2015','2016','2017','2018','2019','2020','2021']
     years_tick=[2012,2013,2014,2015,2016,2017,2018,2019,2020,2021, 2022]
     years_tick_pos=[]
     for idx,y in enumerate(years_tick):
@@ -510,7 +430,7 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     years_tick_pos=np.asarray(years_tick_pos)
     
     
-    #mm_obj,norm_ts_mm=min_max_norm(num_val,start_idx,end_idx)# returns the entirely normalized ts, based on parameters upto 305
+    
     
     
     
@@ -520,9 +440,7 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     
     #read predictions
     
-    '''pred_m_cnn=np.load(os.path.join(os.getcwd(),w_dir_path,'forecasts','multiCNN_pred_'+UA+'default_lr.npy'))
-    pred_m_ann=np.load(os.path.join(os.getcwd(),w_dir_path,'forecasts','multiANN_pred_'+UA+'default_lr.npy'))
-    pred_m_lstm=np.load(os.path.join(os.getcwd(),w_dir_path,'forecasts','multiLSTM_pred_'+UA+'default_lr_with_relu.npy'))'''
+    
     
     pred_m_cnn=np.load(str(Path("/app/temp_data",f"multiCNN_pred_{UA}_{tile}_default_lr_v2.npy")))
     pred_m_ann=np.load(str(Path("/app/temp_data",f"multiANN_pred_{UA}_{tile}_default_lr_v2.npy")))
@@ -544,11 +462,6 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     
     avg_pred_ens, c_flag=get_ens(avg_pred_ann,avg_pred_cnn,avg_pred_lstm, weights)
     
-    '''write_dir_plots=os.path.join(os.getcwd(),w_dir_path,'plots')
-    if not os.path.exists(write_dir_plots):#AE-det
-        os.makedirs(write_dir_plots)
-    else:
-        ('plot dir exists, writing to it')'''
     
     
     #----------------mse of median pred and original ntl------
@@ -563,8 +476,6 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     
     observation_count=avg_mse_lstm.shape[0]
     ts_stack=np.zeros((observation_count,14))#ntl,ntl-filtered,non_weighted_avg, wt_ntl_filtered, gap-filled, gap-filled-filtered,non_weighted_gap_ wt-gap-filled, flags
-    #ts_stack[:,0]=ntl[]
-    #ts_stack[:,1]=filterd_ntl
     ts_stack[:,0]=non_nan_yr[start_idx+win_l:]
     ts_stack[:,1]=non_nan_month[start_idx+win_l:]
     ts_stack[:,2]=non_nan_day[start_idx+win_l:]
@@ -636,8 +547,6 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     ch_summary=ch_summary_methods(bin_ann_avg,bin_cnn_avg, bin_lstm_avg,bin_ens_avg,avg_pred_ann,avg_pred_cnn,avg_pred_lstm,avg_pred_ens,start_idx, norm_ts_mm, win_l)
     
     ch_steps=np.zeros((observation_count,11))#ntl,ntl-filtered,non_weighted_avg, wt_ntl_filtered, gap-filled, gap-filled-filtered,non_weighted_gap_ wt-gap-filled, flags
-    #ts_stack[:,0]=ntl[]
-    #ts_stack[:,1]=filterd_ntl
     ch_steps[:,0]=non_nan_yr[start_idx+win_l:]
     ch_steps[:,1]=non_nan_month[start_idx+win_l:]
     ch_steps[:,2]=non_nan_day[start_idx+win_l:]
@@ -661,8 +570,6 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     inversed_pred_lstm = mm_obj.inverse_transform(avg_pred_lstm)
     
     inv_pred=np.zeros((observation_count,8))#ntl,ntl-filtered,non_weighted_avg, wt_ntl_filtered, gap-filled, gap-filled-filtered,non_weighted_gap_ wt-gap-filled, flags
-    #ts_stack[:,0]=ntl[]
-    #ts_stack[:,1]=filterd_ntl
     inv_pred[:,0]=non_nan_yr[start_idx+win_l:]
     inv_pred[:,1]=non_nan_month[start_idx+win_l:]
     inv_pred[:,2]=non_nan_day[start_idx+win_l:]
@@ -672,7 +579,6 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     inv_pred[:,6]=inversed_pred_cnn[:,0]
     inv_pred[:,7]=inversed_pred_lstm[:,0]
     
-    #ts_stack[:,6]=np.datetime64(poly_zarr["Dates"][0:])
     
     np.savetxt(str(Path("/app/temp_data",f"fua_{UA}_{tile}_pred_ntl_scale.csv")),inv_pred,fmt='%f', delimiter=',', newline='\n',header='yr, month, day,ntl_avg,pred_ens, pred_ann, pred_cnn, pred_lstm')
     
@@ -684,12 +590,11 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     plt.yticks(fontsize=17)
     plt.legend(fontsize=17)
     plt.ylabel('NTL(nW cm$^-$$^2$ sr$^-$$^1$)', fontsize=17)
-    #plt.savefig(os.path.join(write_dir_plots,UA+'_ens_pred_with_relu.png'), dpi=180)
     plt.savefig(str(Path("/app/temp_data",f"fua_{UA}_{tile}_ens_pred.png")), dpi=180)
     plt.close()
     
     x=np.arange(0,inversed_obs.shape[0])
-    print('lengts',x,inversed_obs.shape[0])
+    print('length',x,inversed_obs.shape[0])
     plt.figure(figsize=(21,11))
     plt.subplot(2,1,1)
     plt.plot(inversed_obs,'k',label='observed')
@@ -701,13 +606,9 @@ def compute_metrics(n, tile,end_d,end_m,end_y, path_obs,path_date, eval_dates):
     plt.subplot(2,1,2)
     plt.scatter(x,c_flag)
     plt.xticks(ticks = years_tick_pos ,labels = years_tick, rotation = 0, fontsize=17)
-    #plt.savefig(os.path.join(write_dir_plots,UA+'_ens_pred_with_flag.png'), dpi=180)
     plt.savefig(str(Path("/app/temp_data",f"fua_{UA}_{tile}_ens_pred_flag.png")), dpi=180)
     plt.close()
-    #plt.close()
     
-    #np.savetxt(os.path.join(write_dir_plots,UA+'_ens_pred.csv'),inversed_pred_ens,fmt='%10.4f', delimiter=',', newline='\n',header='ntl_pred')
-    #np.savetxt(os.path.join(write_dir_plots,UA+'_ens_obs.csv'),inversed_obs,fmt='%10.4f', delimiter=',', newline='\n',header='ntl_obs')
     plot_change(ch_summary,avg_pred_ann,avg_pred_cnn,avg_pred_lstm,avg_pred_ens, norm_ts_mm, start_idx,c_flag,win_l, UA,tile, years_tick, years_tick_pos)
     d=eval_dates
     
